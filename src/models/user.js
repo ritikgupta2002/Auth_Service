@@ -1,5 +1,10 @@
 "use strict";
 const { Model } = require("sequelize");
+
+const bcrypt = require("bcrypt");
+
+const { SALT } = require("../config/serverConfig");
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -27,12 +32,20 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           len: [3, 100],
         },
-      }, 
+      },
     },
     {
       sequelize,
       modelName: "User",
     }
   );
+  //trigger
+  User.beforeCreate((user) => {
+    //console.log(user);
+    //so here we will do encryption using bcrypt package .
+    const encryptedPassword = bcrypt.hashSync(user.password, SALT);
+    //as above line of code is synchronous as function hashSync works syncronously so need to write async
+    user.password=encryptedPassword;//update the password
+  });
   return User;
 };
