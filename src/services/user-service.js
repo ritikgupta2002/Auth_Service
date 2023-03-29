@@ -35,7 +35,27 @@ class UserService {
       //step3->if passwords match then create token and send it to user .
       const newJWT = this.createToken({ email: user.email, id: user.id });
       return newJWT;
-      
+    } catch (error) {
+      console.log("Something went wrong in the sign in process ");
+      throw error;
+    }
+  }
+
+  async isAuthenticated(token) {
+    //now user already has the token because after the 1st signin user got the token from the server
+    //so if next time user tries to login using token the server has to authenticate the token .
+    try {
+      const response = this.verifyToken(token);
+      if (!response) {
+        throw { error: "Invalid Token" };
+      }
+      const user = this.userRepository.getById(response.id);
+      //even if the token is verified we are checking whether the user still has an account in our database
+      //it might be possible that he might have deleted the account so in that case token should be not valid .
+      if (!user) {
+        throw { error: "No user with the corresponding token exists" };
+      }
+      return user.id;
     } catch (error) {
       console.log("Something went wrong in the sign in process ");
       throw error;
