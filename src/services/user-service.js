@@ -49,7 +49,7 @@ class UserService {
       if (!response) {
         throw { error: "Invalid Token" };
       }
-      const user = this.userRepository.getById(response.id);
+      const user = await this.userRepository.getById(response.id);
       //even if the token is verified we are checking whether the user still has an account in our database
       //it might be possible that he might have deleted the account so in that case token should be not valid .
       if (!user) {
