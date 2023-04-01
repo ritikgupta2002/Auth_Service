@@ -14,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsToMany(models.Role, {
+        through: "User_Roles",
+      });
     }
   }
   User.init(
@@ -45,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
     //so here we will do encryption using bcrypt package .
     const encryptedPassword = bcrypt.hashSync(user.password, SALT);
     //as above line of code is synchronous as function hashSync works syncronously so need to write async
-    user.password=encryptedPassword;//update the password
+    user.password = encryptedPassword; //update the password
   });
   return User;
 };
